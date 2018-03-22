@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 	`type`	TEXT NOT NULL DEFAULT 'user',
 	`hash`	TEXT NOT NULL,
 	`id`	INTEGER NOT NULL UNIQUE,
+	`salt`	TEXT NOT NULL,
 	PRIMARY KEY(`email`,`type`,`id`,`name`)
 ) WITHOUT ROWID;
 CREATE TABLE IF NOT EXISTS `song_band` (
@@ -16,9 +17,9 @@ CREATE TABLE IF NOT EXISTS `song_band` (
 CREATE TABLE IF NOT EXISTS `song_album` (
 	`album_id`	INTEGER NOT NULL,
 	`song_id`	INTEGER NOT NULL,
-	FOREIGN KEY(`album_id`) REFERENCES `album`(`id`),
+	PRIMARY KEY(`album_id`,`song_id`),
 	FOREIGN KEY(`song_id`) REFERENCES `song`(`id`),
-	PRIMARY KEY(`album_id`,`song_id`)
+	FOREIGN KEY(`album_id`) REFERENCES `album`(`id`)
 );
 CREATE TABLE IF NOT EXISTS `song` (
 	`name`	TEXT NOT NULL,
@@ -48,10 +49,10 @@ CREATE TABLE IF NOT EXISTS `person_role_movie` (
 	`person_id`	INTEGER NOT NULL,
 	`role_id`	INTEGER NOT NULL,
 	`movie_id`	INTEGER NOT NULL,
+	FOREIGN KEY(`role_id`) REFERENCES `role`(`id`),
 	FOREIGN KEY(`person_id`) REFERENCES `person`(`id`),
-	PRIMARY KEY(`person_id`,`role_id`,`movie_id`),
 	FOREIGN KEY(`movie_id`) REFERENCES `movie`(`id`),
-	FOREIGN KEY(`role_id`) REFERENCES `role`(`id`)
+	PRIMARY KEY(`person_id`,`role_id`,`movie_id`)
 ) WITHOUT ROWID;
 CREATE TABLE IF NOT EXISTS `person_role_episode` (
 	`person_id`	INTEGER NOT NULL,
@@ -65,10 +66,10 @@ CREATE TABLE IF NOT EXISTS `person_role_band` (
 	`person_id`	INTEGER NOT NULL,
 	`role_id`	INTEGER NOT NULL,
 	`band_id`	INTEGER NOT NULL,
+	FOREIGN KEY(`band_id`) REFERENCES `band`(`id`),
 	PRIMARY KEY(`person_id`,`role_id`,`band_id`),
-	FOREIGN KEY(`role_id`) REFERENCES `role`(`id`),
 	FOREIGN KEY(`person_id`) REFERENCES `person`(`id`),
-	FOREIGN KEY(`band_id`) REFERENCES `band`(`id`)
+	FOREIGN KEY(`role_id`) REFERENCES `role`(`id`)
 ) WITHOUT ROWID;
 CREATE TABLE IF NOT EXISTS `person` (
 	`fname`	TEXT NOT NULL,
@@ -109,8 +110,8 @@ CREATE TABLE IF NOT EXISTS `episode` (
 CREATE TABLE IF NOT EXISTS `band_person` (
 	`band_id`	INTEGER NOT NULL,
 	`person_id`	INTEGER NOT NULL,
-	FOREIGN KEY(`band_id`) REFERENCES `band`(`id`),
-	PRIMARY KEY(`band_id`,`person_id`)
+	PRIMARY KEY(`band_id`,`person_id`),
+	FOREIGN KEY(`band_id`) REFERENCES `band`(`id`)
 ) WITHOUT ROWID;
 CREATE TABLE IF NOT EXISTS `band` (
 	`name`	TEXT NOT NULL,
